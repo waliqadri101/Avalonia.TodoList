@@ -1,0 +1,249 @@
+<UserControl
+    x:Class="Avalonia.TodoList.Views.MainView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dtos="clr-namespace:Avalonia.TodoList.Data.Dtos"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Avalonia.TodoList.ViewModels"
+    d:DesignHeight="550"
+    d:DesignWidth="300"
+    x:DataType="vm:MainViewModel"
+    Loaded="UserControl_Loaded"
+    mc:Ignorable="d">
+    <Design.DataContext>
+        <!--
+            This only sets the DataContext for the previewer in an IDE,
+            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
+        -->
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Grid
+        ColumnDefinitions="*"
+        RowDefinitions="Auto, *, Auto"
+        ShowGridLines="False">
+
+        <!--  GRID ROW 0 : TITLE OF THE APPLICATION  -->
+        <StackPanel
+            Height="60"
+            VerticalAlignment="Top"
+            Background="{StaticResource GreenAccentBrush}">
+            <Label
+                Margin="10,10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Content="{Binding Title}"
+                FontSize="30"
+                FontWeight="Bold"
+                Foreground="#251605" />
+        </StackPanel>
+        <!--  GRID ROW 0 : TITLE OF THE APPLICATION  -->
+
+        <!--  GRID ROW 1 : MAIN BODY OF THE APPLICATION  -->
+        <ScrollViewer Grid.Row="1" Grid.Column="0">
+            <Border BorderBrush="Red" BorderThickness="2">
+                <StackPanel>
+                    <ListBox ItemsSource="{CompiledBinding TodoList}">
+                        <ListBox.ItemContainerTheme>
+                            <ControlTheme TargetType="ListBoxItem">
+                                <Setter Property="Margin" Value="0" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Background" Value="White" />
+                            </ControlTheme>
+                        </ListBox.ItemContainerTheme>
+
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem:pointerover">
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="Background" Value="White" />
+                            </Style>
+                        </ListBox.Styles>
+
+                        <ListBox.DataTemplates>
+                            <DataTemplate DataType="dtos:GetTodoDto">
+                                <Border
+                                    Margin="5"
+                                    Padding="5"
+                                    BorderBrush="{StaticResource GreenAccentBrush}"
+                                    BorderThickness="5"
+                                    CornerRadius="5">
+                                    <Grid ColumnDefinitions="Auto, Auto, *" ShowGridLines="False">
+                                        <CheckBox
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Content=""
+                                            IsChecked="{CompiledBinding IsCompleted}" />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Margin="0,5,0,0"
+                                            Content="{CompiledBinding Name}" />
+                                    </Grid>
+                                </Border>
+
+                            </DataTemplate>
+                        </ListBox.DataTemplates>
+                    </ListBox>
+
+                    <Expander
+                        Margin="5"
+                        Padding="5"
+                        HorizontalAlignment="Stretch"
+                        Header="Completed Tasks"
+                        IsExpanded="True">
+                        <ListBox ItemsSource="{CompiledBinding TodoListCompleted}">
+                            <ListBox.ItemContainerTheme>
+                                <ControlTheme TargetType="ListBoxItem">
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="Background" Value="White" />
+                                </ControlTheme>
+                            </ListBox.ItemContainerTheme>
+
+                            <ListBox.Styles>
+                                <Style Selector="ListBoxItem:pointerover">
+                                    <Setter Property="FontWeight" Value="Bold" />
+                                    <Setter Property="Background" Value="White" />
+                                </Style>
+                            </ListBox.Styles>
+
+                            <ListBox.DataTemplates>
+                                <DataTemplate DataType="dtos:GetTodoDto">
+                                    <Border
+                                        Margin="5"
+                                        Padding="5"
+                                        BorderBrush="{StaticResource DarkGreenAccentBrush}"
+                                        BorderThickness="5"
+                                        CornerRadius="5">
+                                        <Grid ColumnDefinitions="Auto, Auto, *" ShowGridLines="False">
+                                            <CheckBox
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Content=""
+                                                IsChecked="{CompiledBinding IsCompleted}" />
+                                            <Label
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Margin="0,5,0,0"
+                                                Content="{CompiledBinding Name}" />
+                                        </Grid>
+                                    </Border>
+
+                                </DataTemplate>
+                            </ListBox.DataTemplates>
+                        </ListBox>
+                    </Expander>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+        <!--  GRID ROW 1 : MAIN BODY OF THE APPLICATION  -->
+
+
+        <!--  GRID ROW 2 : BOTTOM BUTTONS AND THE FLYOUT  -->
+        <Grid
+            Grid.Row="2"
+            Grid.Column="0"
+            ColumnDefinitions="*,*,*"
+            RowDefinitions="*">
+            <StackPanel Grid.Row="0" Grid.Column="3">
+                <Button
+                    Name="btnAddNewWithFlyout"
+                    Width="50"
+                    Height="50"
+                    Margin="10"
+                    HorizontalAlignment="Right"
+                    Flyout="{StaticResource CustomFlyoutPanel}"
+                    ToolTip.Tip="Flyout example">
+
+                    <Svg Path="/Assets/add-plus.svg" />
+
+                </Button>
+            </StackPanel>
+        </Grid>
+        <!--  GRID ROW 2 : BOTTOM BUTTONS AND THE FLYOUT  -->
+    </Grid>
+
+    <!--  STYLES AND RESOURCES  -->
+    <UserControl.Styles>
+        <!--  style for the flyout  -->
+        <Style Selector="FlyoutPresenter.mySpecialClass">
+            <Setter Property="Background" Value="LightYellow" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+    </UserControl.Styles>
+
+    <UserControl.Resources>
+        <!--  Flyout definition  -->
+        <Flyout
+            x:Key="CustomFlyoutPanel"
+            FlyoutPresenterClasses="mySpecialClass"
+            Placement="AnchorAndGravity"
+            PlacementAnchor="Left"
+            PlacementGravity="TopLeft"
+            VerticalOffset="0">
+
+            <Border
+                BorderBrush="{StaticResource GreenAccentBrush}"
+                BorderThickness="5"
+                CornerRadius="10">
+
+                <Grid
+                    Width="200"
+                    ColumnDefinitions="Auto, *"
+                    RowDefinitions="Auto, Auto, Auto, Auto"
+                    ShowGridLines="False">
+
+                    <!--  ROW 0  -->
+                    <StackPanel
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2">
+
+                        <TextBlock
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Text="Add new todo item " />
+
+                        <TextBox
+                            Height="60"
+                            Margin="10"
+                            FontSize="16"
+                            Text="{Binding NewTodoItem}" />
+
+                    </StackPanel>
+                    <!--  ROW 0  -->
+
+                    <!--  ROW 1  -->
+                    <StackPanel
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal">
+                        <Button
+                            Margin="10"
+                            Padding="10"
+                            Command="{CompiledBinding OkayButtonCommand}"
+                            Content="Add"
+                            FontSize="16" />
+
+                        <Button
+                            Margin="10"
+                            Padding="10"
+                            Command="{Binding CancelFlyOutCommand}"
+                            CommandParameter="This is the command parameter"
+                            Content="Cancel"
+                            FontSize="16" />
+                    </StackPanel>
+                    <!--  ROW 1  -->
+                </Grid>
+            </Border>
+        </Flyout>
+    </UserControl.Resources>
+
+</UserControl>
