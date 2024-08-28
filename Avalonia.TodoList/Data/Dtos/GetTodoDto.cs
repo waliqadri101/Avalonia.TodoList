@@ -8,7 +8,16 @@ namespace Avalonia.TodoList.Data.Dtos
     {
         public int Id { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
-        
+        public string ShortName
+        {
+            get {
+                if (Name.Length > 30) {
+                    return Name.Substring(0, 25) + "...";
+                } else {
+                    return Name;
+                }
+            }
+        }
         public bool _isCompleted { get; set; } = false;
         public bool IsCompleted
         {

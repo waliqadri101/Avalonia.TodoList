@@ -17,7 +17,7 @@ namespace Avalonia.TodoList.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
-    #region fields
+    #region FIELDS AND PROPERTIES
     private TodoService? _todoService;
     private readonly IMessenger _messenger;
 
