@@ -3,6 +3,7 @@ using Avalonia.TodoList.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -37,6 +38,14 @@ namespace Avalonia.TodoList.Services
             if (response.IsSuccessStatusCode)
             {
                 var todos = await response.Content.ReadFromJsonAsync<List<Todo>>();
+                
+
+                // order the list with the recent CreatedOn on the top.
+                if (todos != null && todos.Count > 1)
+                {
+                    todos = todos.OrderByDescending(todo => todo.CreatedOn).ToList();
+                }
+
                 return todos ?? new List<Todo>();
             }
             else
