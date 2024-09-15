@@ -11,6 +11,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Assets\menu-svgrepo-com.svg" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
 		<PackageReference Include="Avalonia.Svg.Skia" Version="11.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />

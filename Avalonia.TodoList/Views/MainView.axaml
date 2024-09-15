@@ -2,6 +2,7 @@
     x:Class="Avalonia.TodoList.Views.MainView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Avalonia.TodoList.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dtos="clr-namespace:Avalonia.TodoList.Data.Dtos"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,11 +12,8 @@
     x:DataType="vm:MainViewModel"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d">
+
     <Design.DataContext>
-        <!--
-            This only sets the DataContext for the previewer in an IDE,
-            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
-        -->
         <vm:MainViewModel />
     </Design.DataContext>
 
@@ -25,10 +23,9 @@
         ShowGridLines="False">
 
         <!--  GRID ROW 0 : TITLE OF THE APPLICATION  -->
-        <StackPanel
-            Height="60"
-            VerticalAlignment="Top"
-            Background="{StaticResource GreenAccentBrush}">
+        <StackPanel VerticalAlignment="Top" Background="{StaticResource GreenAccentBrush}">
+            <!--  Using Image control  -->
+
             <Label
                 Margin="10,10"
                 HorizontalAlignment="Center"
@@ -42,9 +39,9 @@
 
         <!--  GRID ROW 1 : MAIN BODY OF THE APPLICATION  -->
         <ScrollViewer Grid.Row="1" Grid.Column="0">
-            <Border BorderBrush="Red" BorderThickness="2">
+            <Border BorderBrush="Red" BorderThickness="0">
                 <StackPanel>
-                    <ListBox ItemsSource="{CompiledBinding TodoList}">
+                    <ListBox x:Name="lbMainTodo" ItemsSource="{CompiledBinding TodoList}">
                         <ListBox.ItemContainerTheme>
                             <ControlTheme TargetType="ListBoxItem">
                                 <Setter Property="Margin" Value="0" />
@@ -68,18 +65,49 @@
                                     BorderBrush="{StaticResource GreenAccentBrush}"
                                     BorderThickness="5"
                                     CornerRadius="5">
-                                    <Grid ColumnDefinitions="Auto, Auto, *" ShowGridLines="False">
+                                    <Grid ColumnDefinitions="Auto, *, Auto" ShowGridLines="False">
+
                                         <CheckBox
                                             Grid.Row="0"
                                             Grid.Column="0"
                                             Content=""
                                             IsChecked="{CompiledBinding IsCompleted}" />
-                                        <Label
+
+                                        <TextBlock
                                             Grid.Row="0"
                                             Grid.Column="1"
                                             Margin="0,5,0,0"
-                                            Content="{CompiledBinding ShortName}"
-                                            ToolTip.Tip="{Binding Name}" />
+                                            Text="{CompiledBinding Name}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap"
+                                            ToolTip.Tip="{CompiledBinding Name}" />
+
+                                        <Button
+                                            Grid.Row="0"
+                                            Grid.Column="2"
+                                            Command="{CompiledBinding $parent[ListBox].((vm:MainViewModel)DataContext).ItemOptionClickCommand}"
+                                            CommandParameter="{CompiledBinding Id}">
+                                            <Button.Flyout>
+                                                <!--  Flyout definition  -->
+                                                <Flyout
+                                                    FlyoutPresenterClasses="AddFlyoutClass"
+                                                    Placement="AnchorAndGravity"
+                                                    PlacementAnchor="Bottom"
+                                                    PlacementGravity="BottomLeft"
+                                                    VerticalOffset="0">
+
+                                                    <!--  FLYOUT COMES HERE  -->
+                                                    <controls:EditDeletePopupControl Item="{CompiledBinding .}" />
+                                                    <!--  FLYOUT COMES HERE  -->
+                                                </Flyout>
+                                            </Button.Flyout>
+
+                                            <Svg
+                                                Width="20"
+                                                Height="20"
+                                                Path="avares://Avalonia.TodoList/Assets/menu-svgrepo-com.svg" />
+                                        </Button>
+
                                     </Grid>
                                 </Border>
 
@@ -117,17 +145,21 @@
                                         BorderBrush="{StaticResource DarkGreenAccentBrush}"
                                         BorderThickness="5"
                                         CornerRadius="5">
-                                        <Grid ColumnDefinitions="Auto, Auto, *" ShowGridLines="False">
+                                        <Grid ColumnDefinitions="Auto, *, Auto" ShowGridLines="False">
+
                                             <CheckBox
                                                 Grid.Row="0"
                                                 Grid.Column="0"
                                                 Content=""
                                                 IsChecked="{CompiledBinding IsCompleted}" />
-                                            <Label
+
+                                            <TextBlock
                                                 Grid.Row="0"
                                                 Grid.Column="1"
                                                 Margin="0,5,0,0"
-                                                Content="{CompiledBinding ShortName}"
+                                                Text="{CompiledBinding Name}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="NoWrap"
                                                 ToolTip.Tip="{Binding Name}" />
                                         </Grid>
                                     </Border>
@@ -169,8 +201,8 @@
     <!--  STYLES AND RESOURCES  -->
     <UserControl.Styles>
         <!--  style for the flyout  -->
-        <Style Selector="FlyoutPresenter.mySpecialClass">
-            <Setter Property="Background" Value="LightYellow" />
+        <Style Selector="FlyoutPresenter.AddFlyoutClass">
+            <Setter Property="Background" Value="Transparent" />
             <Setter Property="Margin" Value="0" />
             <Setter Property="Padding" Value="0" />
             <Setter Property="BorderThickness" Value="0" />
@@ -183,9 +215,9 @@
         <!--  Flyout definition  -->
         <Flyout
             x:Key="CustomFlyoutPanel"
-            FlyoutPresenterClasses="mySpecialClass"
+            FlyoutPresenterClasses="AddFlyoutClass"
             Placement="AnchorAndGravity"
-            PlacementAnchor="Left"
+            PlacementAnchor="Top"
             PlacementGravity="TopLeft"
             VerticalOffset="0">
 
@@ -195,7 +227,7 @@
                 CornerRadius="10">
 
                 <Grid
-                    Width="200"
+                    Width="230"
                     ColumnDefinitions="Auto, *"
                     RowDefinitions="Auto, Auto, Auto, Auto"
                     ShowGridLines="False">
@@ -207,6 +239,8 @@
                         Grid.ColumnSpan="2">
 
                         <TextBlock
+                            Margin="5"
+                            Padding="5"
                             FontSize="18"
                             FontWeight="Bold"
                             Text="Add new todo item " />

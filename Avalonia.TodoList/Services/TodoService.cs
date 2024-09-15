@@ -31,6 +31,10 @@ namespace Avalonia.TodoList.Services
             };
         }
 
+        /// <summary>
+        /// A service method to hit the api and get all the todo list item, order by decending order of the CreateOn Date.
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Todo>> GetAllTodosAsync()
         {
             var response = await _httpClient.GetAsync("api/todo/all");
@@ -53,24 +57,7 @@ namespace Avalonia.TodoList.Services
                 return new List<Todo>();
             }
         }
-
-        // Method to update a Todo item
-        public async Task<bool> UpdateTodoAsync(GetTodoDto todo)
-        {
-            var response = await _httpClient.PutAsJsonAsync($"api/todo/update/{todo.Id}", todo);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                // Handle error response here
-                Debug.WriteLine($"Failed to update todo item with ID: {todo.Id}");
-                return false;
-            }
-            else {
-                Debug.WriteLine($"Successfully updated the ID: {todo.Id}");
-                return true;
-            }
-        }
-
+        
         public async Task<Todo?> CreateNewTodoAsync(CreateTodoDto todo)
         {
             var response = await _httpClient.PostAsJsonAsync($"api/todo/create", todo);
@@ -87,6 +74,21 @@ namespace Avalonia.TodoList.Services
             }
         }
 
-    }
+        public async Task<bool> UpdateTodoAsync(GetTodoDto todo)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/todo/update/{todo.Id}", todo);
 
+            if (!response.IsSuccessStatusCode)
+            {
+                // Handle error response here
+                Debug.WriteLine($"Failed to update todo item with ID: {todo.Id}");
+                return false;
+            }
+            else
+            {
+                Debug.WriteLine($"Successfully updated the ID: {todo.Id}");
+                return true;
+            }
+        }
+    }
 }

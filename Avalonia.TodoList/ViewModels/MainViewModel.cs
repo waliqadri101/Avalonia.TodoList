@@ -18,6 +18,8 @@ namespace Avalonia.TodoList.ViewModels;
 public partial class MainViewModel : ViewModelBase
 {
     #region FIELDS AND PROPERTIES
+    public string SampleTextValueToTestBindings { get; set; } = "hi there";
+
     private TodoService? _todoService;
     private readonly IMessenger _messenger;
 
@@ -101,7 +103,7 @@ public partial class MainViewModel : ViewModelBase
         {
             // ONLY FOR XAML DESIGNER : Get some Dummy data and Deserialize into TodoList
 
-            string sTodoListUnCompletedJson = "[{\"Id\":1,\"Name\":\"string\",\"IsCompleted\":false,\"CreatedOn\":\"2024-08-24T03:38:29.1799151\",\"CreatedBy\":\"Sample User\"},{\"Id\":6,\"Name\":\"Creating a new todo list\",\"IsCompleted\":false,\"CreatedOn\":\"2024-08-24T20:00:26.9997771\",\"CreatedBy\":\"Sample User\"}]";
+            string sTodoListUnCompletedJson = "[{\"Id\":1,\"Name\":\"string very long data to display in an item to see if it truncates\",\"IsCompleted\":false,\"CreatedOn\":\"2024-08-24T03:38:29.1799151\",\"CreatedBy\":\"Sample User\"},{\"Id\":6,\"Name\":\"Creating a new todo list\",\"IsCompleted\":false,\"CreatedOn\":\"2024-08-24T20:00:26.9997771\",\"CreatedBy\":\"Sample User\"}]";
             string sTodoListCompleteJson = "[{\"Id\":3,\"Name\":\"New todo list item.\",\"IsCompleted\":true,\"CreatedOn\":\"2024-08-24T03:45:42.2157181\",\"CreatedBy\":\"Sample User\"},{\"Id\":5,\"Name\":\"Another item test\",\"IsCompleted\":true,\"CreatedOn\":\"2024-08-24T04:05:08.0375123\",\"CreatedBy\":\"Sample User\"}]";
             TodoList = JsonSerializer.Deserialize<ObservableCollection<GetTodoDto>>(sTodoListUnCompletedJson);
             TodoListCompleted = JsonSerializer.Deserialize<ObservableCollection<GetTodoDto>>(sTodoListCompleteJson);
@@ -127,6 +129,7 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private void CancelFlyOut(object? param)
     {
+        // send a message to the code behind so it can close that flyout.
         _messenger.Send(new MessengerClass() { Message = "CloseFlyOut" });
     }
 
@@ -165,7 +168,34 @@ public partial class MainViewModel : ViewModelBase
             return false;
         }
     }
+
+
+    [RelayCommand]
+    private void ItemOptionClick(object? param)
+    {
+        if (param != null)
+        {
+            Debug.WriteLine("CheckBox Clicked on " + param!.ToString());
+        }
+    }
+
+    [RelayCommand]
+    private void ItemOptionDeleteClick(object? param)
+    {
+        if (param != null)
+        {
+            Debug.WriteLine("Delete button clicked for " + param!.ToString());
+        }
+    }
+    [RelayCommand]
+    private void ItemOptionEditClick(object? param)
+    {
+        if (param != null)
+        {
+            Debug.WriteLine("Edit button clicked for " + param!.ToString());
+        }
+    }
+
     #endregion
 }
-
 

@@ -1,0 +1,136 @@
+<UserControl
+    x:Class="Avalonia.TodoList.UserControls.EditDeletePopupControl"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dtos="clr-namespace:Avalonia.TodoList.Data.Dtos"
+    xmlns:local="clr-namespace:Avalonia.TodoList.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="280"
+    x:DataType="local:EditDeletePopupControl"
+    Background="LightBlue"
+    mc:Ignorable="d">
+
+    <!--
+        THIS LINE CAUSEING STACK OVERFLOW ERROR.
+        I DON'T NEED TO DEFINE A DESIGN TIME DATACONTEXT FOR SOME REASON
+    -->
+    <!--<UserControl.DataContext>
+        <local:EditDeletePopupControl />
+    </UserControl.DataContext>-->
+
+
+    <Border
+        Background="LightYellow"
+        BorderBrush="{StaticResource GreenAccentBrush}"
+        BorderThickness="5"
+        CornerRadius="10">
+
+        <Grid
+            ColumnDefinitions="Auto, Auto, *"
+            RowDefinitions="Auto, Auto, Auto"
+            ShowGridLines="False">
+
+            <!--  ROW 0  -->
+            <TextBlock
+                Margin="5"
+                Padding="5"
+                HorizontalAlignment="Center"
+                FontSize="18"
+                FontWeight="Bold"
+                Text="Options" />
+            <!--  ROW 0  -->
+
+            <!--  ROW 1 - Controls  -->
+            <Grid
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Background="Coral"
+                ColumnDefinitions="Auto, *"
+                RowDefinitions="*, *"
+                ShowGridLines="True">
+
+                <!--  row 0  -->
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="5"
+                    Content="Name" />
+
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Height="60"
+                    Margin="5"
+                    FontSize="16"
+                    IsEnabled="{Binding IsEditing}"
+                    Text="Name" />
+                <!--  row 0  -->
+
+                <!--  row 1  -->
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="5"
+                    Content="Is completed" />
+
+                <CheckBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Height="60"
+                    Margin="5"
+                    FontSize="16"
+                    IsChecked="True"
+                    IsEnabled="{Binding IsEditing}" />
+                <!--  row 1  -->
+            </Grid>
+            <!--  ROW 1 - Controls  -->
+
+            <!--  ROW 2 - Buttons  -->
+            <StackPanel
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Orientation="Horizontal">
+
+                <Button
+                    Name="btnItemDelete"
+                    Margin="10"
+                    Padding="10"
+                    Click="btnItemDelete_Click"
+                    Content="Delete"
+                    FontSize="16" />
+
+                <Button
+                    Name="btnItemEdit"
+                    Margin="10"
+                    Padding="10"
+                    Click="btnItemEdit_Click"
+                    Content="Edit"
+                    FontSize="16" />
+
+                <Button
+                    Name="btnItemCancel"
+                    Margin="10"
+                    Padding="10"
+                    Click="btnItemCancel_Click"
+                    Content="Cancel"
+                    FontSize="16" />
+
+
+            </StackPanel>
+            <!--  ROW 2 - Buttons  -->
+        </Grid>
+    </Border>
+</UserControl>
+
+<!--<Button
+Name="btnItemEdit"
+Margin="10"
+Padding="10"
+Command="{CompiledBinding $parent[ListBox].((vm:MainViewModel)DataContext).ItemOptionEditClickCommand}"
+CommandParameter="{CompiledBinding Id}"
+Content="Edit"
+FontSize="16" />-->

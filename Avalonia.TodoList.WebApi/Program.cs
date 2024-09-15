@@ -29,18 +29,25 @@ namespace Avalonia.TodoList.WebApi
 
 
             var app = builder.Build();
+            Configure(app);     // configuration and check if any migration needed to be applied.
+            app.Run();
+        }
 
+        private static void Configure(WebApplication app)
+        {
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+
+                // Apply migrations
+                ApplyMigrations(app);
             }
 
             // Middleware to redirect from root to Swagger UI
             app.Use(async (context, next) =>
             {
-                // Check if the request is for the root URL
                 if (context.Request.Path == "/")
                 {
                     context.Response.Redirect("/swagger/index.html");
@@ -50,12 +57,39 @@ namespace Avalonia.TodoList.WebApi
                 await next();
             });
 
-
-
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
-            app.Run();
         }
+
+        private static void ApplyMigrations(WebApplication app)
+        {
+            try
+            {
+                using (var scope = app.Services.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<TodoDbContext>();
+
+                    // Check if there are pending migrations and apply them
+                    var pendingMigrations = dbContext.Database.GetPendingMigrations();
+                    if (pendingMigrations.Any())
+                    {
+                        dbContext.Database.Migrate();
+                        Console.WriteLine("Applied pending migrations.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No pending migrations.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the migration failure
+                var logger = app.Services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while applying migrations.");
+            }
+        }
+
     }
 }
